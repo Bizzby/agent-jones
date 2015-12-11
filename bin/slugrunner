@@ -83,8 +83,7 @@ for file in .profile.d/*; do
 done
 hash -r
 
-echo $1
-echo "$(ruby -e "require 'yaml';puts YAML.load_file('Procfile')['$2']")"
+
 ## Inject "start" command to run processes defined in Procfile
 case "$1" in
     start)
