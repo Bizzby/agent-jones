@@ -1,0 +1,20 @@
+description 'an example upstart script'
+author 'sandfox'
+
+start on (local-filesystems and net-device-up)
+stop on shutdown
+
+respawn
+respawn limit 5 60
+
+setuid ubuntu
+setgid ubuntu
+
+env AGENT_NAME="bobby-tables"
+env SCHEDULER_ENDPOINT="https://my-scheduler.example.com"
+env SCHEDULER_TOKEN="some-secret-value-but-this-optional"
+
+script
+        chdir /opt/agent-jones/bobby-tables
+        exec /usr/bin/agent-jones >> /var/log/bobby-tables.log 2>&1
+end script
