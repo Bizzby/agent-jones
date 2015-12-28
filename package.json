@@ -5,16 +5,21 @@
   "bin": {
     "slugrunner": "./bin/slugrunner",
     "agent-jones": "./bin/agent-jones"
-    },
+  },
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"no test specified\" && exit 1",
+    "lint": "eslint lib test bin"
   },
   "author": "sandfox",
   "license": "Apache-2.0",
   "dependencies": {
+    "lodash.clone": "^3.0.3",
     "mkdirp": "^0.5.1",
     "request": "^2.67.0",
     "rimraf": "^2.4.4"
+  },
+  "devDependencies": {
+    "eslint": "^1.10.3"
   }
 }

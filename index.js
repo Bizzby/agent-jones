@@ -2,7 +2,7 @@ var path = require("path");
 var os = require("os");
 
 
-var SlugRunner = require('./lib/SlugRunner');
+var SlugRunnerFactory = require('./lib/SlugRunnerFactory');
 var TaskFetcher = require('./lib/TaskFetcher');
 var AgentJones = require('./lib/AgentJones');
 
@@ -19,9 +19,9 @@ var SLUGRUNNER_CWD = process.env['WORKSPACE'] || path.join(process.cwd(), 'works
 
 
 
-var slugRunner = new SlugRunner(SLUGRUNNER_CWD)
+var slugRunnerFactory = new SlugRunnerFactory(SLUGRUNNER_CWD)
 var taskFetcher = new TaskFetcher(SCHEDULER_ENDPOINT, SCHEDULER_TOKEN)
 
-var agentJones = new AgentJones(agentname, hostname, taskFetcher, slugRunner);
+var agentJones = new AgentJones(agentname, hostname, taskFetcher, slugRunnerFactory);
 
 agentJones.start()
