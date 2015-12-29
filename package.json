@@ -1,6 +1,6 @@
 {
   "name": "agent-jones",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "an agent/runner for heroku tarballs",
   "bin": {
     "slugrunner": "./bin/slugrunner",
@@ -18,7 +18,9 @@
     "lodash.clone": "^3.0.3",
     "mkdirp": "^0.5.1",
     "request": "^2.67.0",
-    "rimraf": "^2.4.4"
+    "rimraf": "^2.4.4",
+    "winston": "^2.1.1",
+    "winston-papertrail": "^1.0.2"
   },
   "devDependencies": {
     "eslint": "^1.10.3"

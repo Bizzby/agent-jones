@@ -2,7 +2,7 @@
 
 _named after one of the "other" agents in the Matrix_
 
-An agent for running tasks that are asigned to it by scheduler (currently all via http). 
+An agent for running tasks that are asigned to it by scheduler (currently all via http(s)). 
 
 It only handles running tarballs that have been built via heroku's build system at the moment.
 
@@ -14,6 +14,21 @@ Simple JSON object with the following keys
 - `command`: an array of command + args to be run
 - `tarball`: string containing the location of a fetchable
 - `enviroment` : single level deep object of key:value which is injected into the enviroment
+
+e.g
+```
+{
+    command: ["node", "-v", "&&", "echo", "$HOME"],
+    tarball: "http://some-server.example.com/app/whizzy/ajde648134.tar.gz",
+    enviroment: {FOO:"BAR", PORT:"4724", "LEVEL": "NEXT"}
+}
+```
+
+Supplying a command that begins with `start` triggers reading of the Procfile in the tarball much like Heroku does. If there is no Procfile or the command doesn't exist, the process will crash
+
+```
+task.command = ["start", "web"]; 
+```
 
 ## Installation
 
@@ -34,10 +49,14 @@ All configuration is currently through the enviroment
 - `SCHEDULER_ENDPOINT`: required, the `url` of the scheduler where tasks will come from
 - `SCHEDULER_TOKEN`: optional, a value that will be used as a bearer token for authenticating with the scheduler
 - `WORKSPACE`: optional, directory the agent will use for unpacking tarballs etc. The agent must have the permission to create this directory and during it's lifecycle will destroy anything here! By default it's the current working directory + '/workspace'
+- `CONSOLE_OUTPUT`: optional, defaults to `true` unless `PAPERTRAIL_URL` is also supplied. Enables/disbales logging to stdout
+- `PAPERTRAIL_URL`: optional, a `url` to a papertrail log destination e.g `syslog://logs.papertrailapp.com:12345`, if supplied will disable logging to stdout.
 
 __Logging__
 
-At the moment all the logs from the agent and it's sub processes going to stdout, the agent prefixes it's logs with timestamp and process idents
+See above, default output is to stdout but optionally a papertrail endpoint can be supplied which will turn off logging to stdout and just send logs to papertrail. Logging to both can be enabled by explicitly supplying `CONSOLE_OUTPUT="true"` as well.
+
+The log output could definately be improved!
 
 ## Development
 
