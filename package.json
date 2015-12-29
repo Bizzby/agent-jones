@@ -6,6 +6,10 @@
     "slugrunner": "./bin/slugrunner",
     "agent-jones": "./bin/agent-jones"
   },
+  "engines": {
+    "node": "0.10.x",
+    "npm": "3.5.x"
+  },
   "main": "index.js",
   "scripts": {
     "test": "echo \"no test specified\" && exit 1",
