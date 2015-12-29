@@ -66,6 +66,14 @@ There are some manual tests in `test` - these needs docs / automating. Basically
 
 Run the linter via `npm run lint`
 
+## Other things...
+
+It's actually possible to run this in a heroku dyno
+__BUT__
+- inbound networking is broken external as enviroment variables don't get passed through (fine if you only make outbound connections)
+- the hostname is some kind of uuid (v4) which changes each time the dyno is run, so you'll probably want to set the hostname in the env vars for now
+- I don't really have a good reason for wanting to do this, but it's fun!
+
 ## COPYRIGHT 
 
 Majority works: Copyright 2015 Bizzby Ltd.
