@@ -16,9 +16,15 @@ tarballServer.listen(tarballServerPort)
 var sendTask = true // used for testing no task
 
 var task  =  new Task()
-task.command = ['echo', '%% task start', '&&', 'echo', '%% $FOO', '&&', 'sleep', '32', '&&', 'echo', '%% task ended']
+
+task.name = 'mock-task-z'
+task.app = 'bash-ting'
+task.command = ['echo', ': task start', '&&', 'echo', ': $FOO', '&&', 'sleep', '32', '&&', 'echo', ': task ended']
 task.tarball = 'http://127.0.0.1:12346/app.tar.gz?somestuff=yeeaah'
 task.enviroment = {FOO:'BAR'}
+task.config = {
+    papertrail : 'syslog://logs3.papertrailapp.com:33280'
+}
 
 
 var mockTaskFetcher = {

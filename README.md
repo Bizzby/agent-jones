@@ -8,26 +8,43 @@ It only handles running tarballs that have been built via heroku's build system 
 
 ## Concepts
 
-__Task__
+### Task
 
 Simple JSON object with the following keys
+- `name`: string, the name of the task
+- `app`: string, the name of application
 - `command`: an array of command + args to be run
 - `tarball`: string containing the location of a fetchable
 - `enviroment` : single level deep object of key:value which is injected into the enviroment
+- `config` : object, optional, see below
 
 e.g
 ```
 {
+    name: "some-task",
+    app: "my-web-app",
     command: ["node", "-v", "&&", "echo", "$HOME"],
     tarball: "http://some-server.example.com/app/whizzy/ajde648134.tar.gz",
-    enviroment: {FOO:"BAR", PORT:"4724", "LEVEL": "NEXT"}
+    enviroment: {FOO:"BAR", PORT:"4724", "LEVEL": "NEXT"},
 }
 ```
+
+__command__
 
 Supplying a command that begins with `start` triggers reading of the Procfile in the tarball much like Heroku does. If there is no Procfile or the command doesn't exist, the process will crash
 
 ```
 task.command = ["start", "web"]; 
+```
+
+__config__
+
+allows passing in configuration for the agent to use in relation to the task, at the moment only one option is supported
+
+`papertrail`: a `url` to a papertrail log destination e.g `syslog://logs.papertrailapp.com:12345`, if supplied your app's stdout will be redirected to papertrail (stderr goes nowhere right now). Output in papertrail will appear as 
+```
+[TIMESTAMP] [task.app] [task.name]/[hostname] 
+Dec 30 20:21:15 bash-ting mock-task-z/sandfox-mbp
 ```
 
 ## Installation

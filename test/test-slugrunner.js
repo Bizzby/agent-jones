@@ -21,23 +21,26 @@ tarballServer.listen(port)
 
 var task = new Task()
 
-task.command = ['echo', 'task start', '&&', 'echo', '$FOO', '&&', 'sleep', '2', '&&', 'echo', 'task ended']
+task.name = 'mock-task'
+task.app = 'bash-ting'
+task.command = ['echo', ': task start', '&&', 'echo', ': $FOO', '&&', 'sleep', '1', '&&', 'echo', ': task ended']
 task.tarball = 'http://127.0.0.1:12345/app.tar.gz?somestuff=yeeaah'
 task.enviroment = {FOO:'BAR'}
+
 
 
 var slugRunner = new SlugRunner(workspace)
 
 slugRunner.on('start', function(){
-    console.log('slugrunner start fired') // eslint-disable-line no-console
+    console.log('[TEST-SCRIPT] slugrunner start fired') // eslint-disable-line no-console
 })
 
 slugRunner.on('exit', function(){
     slugRunner.stop()
-    console.log('slugrunner exit fired') // eslint-disable-line no-console
+    console.log('[TEST-SCRIPT] slugrunner exit fired') // eslint-disable-line no-console
     tarballServer.close()
 })
 
 slugRunner.start(task)
 
-console.log('some log outout should follow :-) \nit should end with "exit fired"\n\n') // eslint-disable-line no-console
+console.log('TEST-SCRIPT] some log outout should follow :-) \n[TEST-SCRIPT] it should end with "exit fired"') // eslint-disable-line no-console
