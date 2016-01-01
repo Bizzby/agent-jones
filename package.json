@@ -10,6 +10,10 @@
     "node": "0.10.x",
     "npm": "3.5.x"
   },
+  "repository" : {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Bizzby/agent-jones.git"
+  },
   "main": "index.js",
   "scripts": {
     "test": "echo \"no test specified\" && exit 1",
