@@ -23,7 +23,7 @@ var task = new Task()
 
 task.name = 'mock-task'
 task.app = 'bash-ting'
-task.command = ['echo', ': task start', '&&', 'echo', ': $FOO', '&&', 'sleep', '1', '&&', 'echo', ': task ended']
+task.command = ['echo', ': task start', '&&', 'echo', ': $$', '&&', 'sleep', '1', '&&', 'echo', ': task ended']
 task.tarball = 'http://127.0.0.1:12345/app.tar.gz?somestuff=yeeaah'
 task.enviroment = {FOO:'BAR'}
 
@@ -43,4 +43,4 @@ slugRunner.on('exit', function(){
 
 slugRunner.start(task)
 
-console.log('TEST-SCRIPT] some log outout should follow :-) \n[TEST-SCRIPT] it should end with "exit fired"') // eslint-disable-line no-console
+console.log('[TEST-SCRIPT] some log outout should follow :-) \n[TEST-SCRIPT] it should end with "exit fired"') // eslint-disable-line no-console
