@@ -42,26 +42,12 @@ mkdir -p $HOME
 if [[ $(ls -A $HOME) ]]; then
     true
 elif [[ $SLUG_URL ]]; then
-    if [[ -e /var/run/secrets/object/store/access-key-id ]]; then
-        if [[ -e /var/run/secrets/object/store/access-secret-key ]]; then
-            keyID=`cat /var/run/secrets/object/store/access-key-id`
-            secretKey=`cat /var/run/secrets/object/store/access-secret-key`
-            domain=`echo $SLUG_URL | awk -F/ '{print $3}'`
-            echo $keyID $secretKey $domain
-            mc config host add $domain $keyID $secretKey
-            mc --quiet cp $SLUG_URL slug.tgz
-            tar -xzf slug.tgz -C $HOME
-            rm slug.tgz
-            unset SLUG_URL
-        fi
-    else
-        ## opendeis/flynn tarballs have no container directory
-        ## heroku tarballs have `./app/` as the container dir
-        curl -s "$SLUG_URL" | tar -xzC $HOME --strip 2
-        unset SLUG_URL
-    fi
+    ## opendeis/flynn tarballs have no container directory
+    ## heroku tarballs have `./app/` as the container dir
+    curl -s "$SLUG_URL" | tar -xzC $HOME --strip 2
+    unset SLUG_URL
 else
-    cat | tar -xzC $HOME
+    cat | tar -xzC $HOME --strip 2
 fi
 
 cd $HOME
@@ -100,22 +86,7 @@ case "$1" in
         ;;
 esac
 
-## Use sdutil to register with service discovery
-
-if [[ $SD_NAME && $PORT ]]; then
-    if [[ $SD_HOST ]]; then
-        runner="sdutil exec -h $SD_HOST -s $SD_NAME:$PORT bash -c"
-        unset SD_HOST
-    else
-        runner="sdutil exec -s $SD_NAME:$PORT bash -c"
-    fi
-    unset SD_NAME
-elif [[ $SD_ARGS ]]; then
-    runner="sdutil $SD_ARGS bash -c"
-    unset SD_ARGS
-else
-    runner="bash -c"
-fi
+runner="bash -c"
 
 ## Run!
 
