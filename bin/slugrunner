@@ -32,7 +32,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # set -eo pipefail
 
-[[ $DEBUG ]] && set -x
+[[ $DEBUG_SLUGRUNNER ]] && set -x
 
 ## Load slug from Bind Mount, URL or STDIN
 
