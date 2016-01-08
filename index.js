@@ -31,6 +31,15 @@ var agentJones = new AgentJones(agentname, hostname, taskWatcher, slugRunnerFact
 
 agentJones.start()
 
+// TODO: tidy me away somewhere
+// graceful Shutdown logic
+process.on('SIGTERM', function(){
+    log('SIGTERM recieved, attempting graceful shutdown')
+    // TODO: get errors and do non-zero exit code stuff
+    agentJones.stop(function(){
+        process.exit()
+    })
+})
 
 // TODO: tidy this away somewhere
 setInterval(function(){

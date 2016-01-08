@@ -57,6 +57,15 @@ npm install -g agent-jones
 
 ## Usage
 
+```
+./bin/agent-jones
+```
+
+__Signals__
+
+`SIGTERM` will cause the process to gracefully terminate
+
+
 __Enviroment Variables__
 
 All configuration is currently through the enviroment
