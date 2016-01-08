@@ -7,6 +7,10 @@ var SchedulerHttpClient = require('./lib/SchedulerHttpClient')
 var AgentJones = require('./lib/AgentJones')
 var TaskWatcher = require('./lib/TaskWatcher')
 
+var log = require('./lib/log')
+var logStringify = require('./lib/utils/logStringify')
+var stats = require('./lib/stats')
+
 var hostname = process.env['HOSTNAME'] || os.hostname();
 var agentname = process.env['AGENT_NAME'] || 'anonymous';
 
@@ -26,3 +30,12 @@ var taskWatcher = new TaskWatcher(agentname, hostname, schedulerClient)
 var agentJones = new AgentJones(agentname, hostname, taskWatcher, slugRunnerFactory);
 
 agentJones.start()
+
+
+// TODO: tidy this away somewhere
+setInterval(function(){
+
+    var processStatOutput = stats.procStats.toJSON()
+    log('metrics ' + logStringify(processStatOutput.process))
+
+}, 60*1000)
