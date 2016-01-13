@@ -6,6 +6,8 @@ var SlugRunnerFactory = require('./lib/SlugRunnerFactory')
 var SchedulerHttpClient = require('./lib/SchedulerHttpClient')
 var AgentJones = require('./lib/AgentJones')
 var TaskWatcher = require('./lib/TaskWatcher')
+var SlackClient = require('./lib/SlackClient')
+var agentJonesSlackifier = require('./lib/agentJonesSlackifier')
 
 var log = require('./lib/log')
 var logStringify = require('./lib/utils/logStringify')
@@ -22,12 +24,19 @@ var SCHEDULER_TOKEN = process.env['SCHEDULER_TOKEN']
 // where we run/unpack the tarball
 var SLUGRUNNER_CWD = process.env['WORKSPACE'] || path.join(process.cwd(), 'workspace')
 
+var SLACK_WEBHOOK_URL = process.env['SLACK_WEBHOOK_URL']
 
 
 var slugRunnerFactory = new SlugRunnerFactory(SLUGRUNNER_CWD)
 var schedulerClient = new SchedulerHttpClient(SCHEDULER_ENDPOINT, SCHEDULER_TOKEN)
 var taskWatcher = new TaskWatcher(agentname, hostname, schedulerClient)
 var agentJones = new AgentJones(agentname, hostname, taskWatcher, slugRunnerFactory);
+
+//turn on slack notifications
+if(SLACK_WEBHOOK_URL) {
+    console.log('activating slackiness')
+    agentJonesSlackifier(agentJones, new SlackClient(SLACK_WEBHOOK_URL))
+}
 
 agentJones.start()
 
