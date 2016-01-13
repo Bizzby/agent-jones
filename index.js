@@ -26,6 +26,9 @@ var SLUGRUNNER_CWD = process.env['WORKSPACE'] || path.join(process.cwd(), 'works
 
 var SLACK_WEBHOOK_URL = process.env['SLACK_WEBHOOK_URL']
 
+// FIXME: ugly log line that feels out of place - should probably go into a fingerprinting funtion
+// inside AgentJones
+log( ['node: ' + process.versions.node, 'os: ' + os.platform() + ' ' + os.release(), 'arch: ' + os.arch()].join(', '))
 
 var slugRunnerFactory = new SlugRunnerFactory(SLUGRUNNER_CWD)
 var schedulerClient = new SchedulerHttpClient(SCHEDULER_ENDPOINT, SCHEDULER_TOKEN)
