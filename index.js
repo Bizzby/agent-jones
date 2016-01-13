@@ -37,26 +37,40 @@ var agentJones = new AgentJones(agentname, hostname, taskWatcher, slugRunnerFact
 
 //turn on slack notifications
 if(SLACK_WEBHOOK_URL) {
-    console.log('activating slackiness')
+    log('slack webhook enabled')
     agentJonesSlackifier(agentJones, new SlackClient(SLACK_WEBHOOK_URL))
 }
 
 agentJones.start()
+
+// TODO: tidy this away somewhere
+var statsOutput = setInterval(function(){
+
+    var processStatOutput = stats.procStats.toJSON()
+    log('metrics ' + logStringify(processStatOutput.process))
+
+}, 60*1000)
+
+var shutUpShop = function(){
+    agentJones.stop(function(){
+        clearInterval(statsOutput)
+        log.close()
+        // DDOGY failsafe incase network IO etc doesn't shutdown - we shouldn't need this
+        // and it generally shouldn't get called
+        setTimeout(process.exit, 5000).unref()
+    })
+}
 
 // TODO: tidy me away somewhere
 // graceful Shutdown logic
 process.on('SIGTERM', function(){
     log('SIGTERM recieved, attempting graceful shutdown')
     // TODO: get errors and do non-zero exit code stuff
-    agentJones.stop(function(){
-        process.exit()
-    })
+    shutUpShop()
 })
 
-// TODO: tidy this away somewhere
-setInterval(function(){
+process.on('SIGHUP', function(){
+    log('SIGHUP recieved, attempting graceful shutdown')
+    shutUpShop()
+})
 
-    var processStatOutput = stats.procStats.toJSON()
-    log('metrics ' + logStringify(processStatOutput.process))
-
-}, 60*1000)
