@@ -2,7 +2,7 @@ var path = require("path")
 var os = require("os")
 
 
-var SlugRunnerFactory = require('./lib/SlugRunnerFactory')
+var HerokuSlugFactory = require('./lib/driver/HerokuSlugFactory')
 var SchedulerHttpClient = require('./lib/SchedulerHttpClient')
 var AgentJones = require('./lib/AgentJones')
 var TaskWatcher = require('./lib/TaskWatcher')
@@ -30,10 +30,10 @@ var SLACK_WEBHOOK_URL = process.env['SLACK_WEBHOOK_URL']
 // inside AgentJones
 log( ['node: ' + process.versions.node, 'os: ' + os.platform() + ' ' + os.release(), 'arch: ' + os.arch()].join(', '))
 
-var slugRunnerFactory = new SlugRunnerFactory(SLUGRUNNER_CWD)
+var herokuSlugDriverFactory = new HerokuSlugFactory(SLUGRUNNER_CWD)
 var schedulerClient = new SchedulerHttpClient(SCHEDULER_ENDPOINT, SCHEDULER_TOKEN)
 var taskWatcher = new TaskWatcher(agentname, hostname, schedulerClient)
-var agentJones = new AgentJones(agentname, hostname, taskWatcher, slugRunnerFactory);
+var agentJones = new AgentJones(agentname, hostname, taskWatcher, herokuSlugDriverFactory);
 
 //turn on slack notifications
 if(SLACK_WEBHOOK_URL) {

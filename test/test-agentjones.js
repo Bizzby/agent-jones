@@ -5,7 +5,7 @@ var EventEmitter = require('events').EventEmitter
 var clone = require('lodash.clone')
 
 var AgentJones = require('../lib/AgentJones')
-var SlugRunnerFactory = require('../lib/SlugRunnerFactory')
+var HerokuSlugFactory = require('../lib/driver/HerokuSlugFactory')
 var Task = require('../lib/Task')
 var TaskWatcher = require('../lib/TaskWatcher')
 
@@ -43,9 +43,9 @@ setInterval(function () {
 
 var workspace = path.join(os.tmpdir(), 'agentjones-test')
 
-var slugRunnerFactory = new SlugRunnerFactory(workspace)
+var herokuSlugFactory = new HerokuSlugFactory(workspace)
 
-var agent = new AgentJones('a', 'b', mockTaskWatcher, slugRunnerFactory)
+var agent = new AgentJones('a', 'b', mockTaskWatcher, herokuSlugFactory)
 
 agent.start()
 
