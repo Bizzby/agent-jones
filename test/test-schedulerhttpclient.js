@@ -16,9 +16,9 @@ var nodename = 'localhost' //
 
 var schedulerHttpClient = new SchedulerHttpClient(schedulerEndpoint, auth)
 
-schedulerHttpClient.getTask(agentname, nodename, function(err, response, body){
-    //console.log(err)
-    console.log(err, body) // eslint-disable-line no-console
-    // Err should be null
-    // body should be ssoommmmeeettthiiiinngg
+schedulerHttpClient.getTask(agentname, nodename, function (err, response, body) {
+  // console.log(err)
+  console.log(err, body) // eslint-disable-line no-console
+// Err should be null
+// body should be ssoommmmeeettthiiiinngg
 })

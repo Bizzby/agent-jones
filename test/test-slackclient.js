@@ -6,10 +6,10 @@ var message = 'This message should appear in slack, if it does then a test has b
 
 var client = new SlackClient(webhookUrl)
 
-client.simpleMessage(message, function(err){
-    if(err) {
-        console.log(err) // eslint-disable-line no-console
-    } else {
-        console.log('message sent ok') // eslint-disable-line no-console
-    }
+client.simpleMessage(message, function (err) {
+  if (err) {
+    console.log(err) // eslint-disable-line no-console
+  } else {
+    console.log('message sent ok') // eslint-disable-line no-console
+  }
 })
