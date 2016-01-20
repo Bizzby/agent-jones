@@ -8,9 +8,9 @@ var os = require('os')
 var tarballServer = require('./mocks/tarballServer').createServer()
 
 var Task = require('../lib/Task')
-var SlugRunner = require('../lib/SlugRunner')
+var SlugRunner = require('../lib/Driver/HerokuSlug')
 
-var workspace = path.join(os.tmpdir(), 'slugrunner-test')
+var workspace = path.join(os.tmpdir(), 'herokuslug-driver-test')
 
 // arbitary
 var port = 12345
