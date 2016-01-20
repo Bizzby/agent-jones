@@ -5,9 +5,7 @@ var path = require('path')
 var testTarballPath = path.resolve(process.cwd(), __dirname, 'app.tar.gz')
 
 exports.createServer = function () {
-
   var tarServer = http.createServer(function (request, response) {
-
     console.log('[FAKE TARBALL SERVER] tarball request recieved') // eslint-disable-line no-console
 
     fs.readFile(testTarballPath, 'binary', function (err, file) {
@@ -22,9 +20,7 @@ exports.createServer = function () {
       response.write(file, 'binary')
       response.end()
     })
-
   })
 
   return tarServer
-
 }
