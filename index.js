@@ -11,7 +11,10 @@ var agentJonesSlackifier = require('./lib/agentJonesSlackifier')
 
 var log = require('./lib/log')
 var logStringify = require('./lib/utils/logStringify')
+var sigTrap = require('./lib/utils/sigTrap')
 var stats = require('./lib/stats')
+
+var pkg = require('./package')
 
 var hostname = process.env['HOSTNAME'] || os.hostname();
 var agentname = process.env['AGENT_NAME'] || 'anonymous';
@@ -28,7 +31,7 @@ var SLACK_WEBHOOK_URL = process.env['SLACK_WEBHOOK_URL']
 
 // FIXME: ugly log line that feels out of place - should probably go into a fingerprinting funtion
 // inside AgentJones
-log( ['node: ' + process.versions.node, 'os: ' + os.platform() + ' ' + os.release(), 'arch: ' + os.arch()].join(', '))
+log( ['agent-jones: ' + pkg.version , 'nodejs: ' + process.versions.node, 'os: ' + os.platform() + ' ' + os.release(), 'arch: ' + os.arch()].join(', '))
 
 var herokuSlugDriverFactory = new HerokuSlugFactory(SLUGRUNNER_CWD)
 var schedulerClient = new SchedulerHttpClient(SCHEDULER_ENDPOINT, SCHEDULER_TOKEN)
@@ -37,7 +40,7 @@ var agentJones = new AgentJones(agentname, hostname, taskWatcher, herokuSlugDriv
 
 //turn on slack notifications
 if(SLACK_WEBHOOK_URL) {
-    log('slack webhook enabled')
+    log('slack output via webhooks enabled')
     agentJonesSlackifier(agentJones, new SlackClient(SLACK_WEBHOOK_URL))
 }
 
@@ -51,7 +54,8 @@ var statsOutput = setInterval(function(){
 
 }, 60*1000)
 
-var shutUpShop = function(){
+var shutUpShop = function(signal){
+    log(`${signal} received, attempting graceful shutdown`)
     agentJones.stop(function(){
         clearInterval(statsOutput)
         log.close()
@@ -61,16 +65,6 @@ var shutUpShop = function(){
     })
 }
 
-// TODO: tidy me away somewhere
-// graceful Shutdown logic
-process.on('SIGTERM', function(){
-    log('SIGTERM recieved, attempting graceful shutdown')
-    // TODO: get errors and do non-zero exit code stuff
-    shutUpShop()
-})
+sigTrap(shutUpShop)
 
-process.on('SIGHUP', function(){
-    log('SIGHUP recieved, attempting graceful shutdown')
-    shutUpShop()
-})
 
