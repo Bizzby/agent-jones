@@ -12,9 +12,10 @@ var agentJonesSlackifier = require('./lib/agentJonesSlackifier')
 var log = require('./lib/log')
 var logStringify = require('./lib/utils/logStringify')
 var sigTrap = require('./lib/utils/sigTrap')
+var fingerprint = require('./lib/utils/fingerprint')
 var stats = require('./lib/stats')
 
-var pkg = require('./package')
+
 
 var hostname = process.env['HOSTNAME'] || os.hostname();
 var agentname = process.env['AGENT_NAME'] || 'anonymous';
@@ -31,7 +32,7 @@ var SLACK_WEBHOOK_URL = process.env['SLACK_WEBHOOK_URL']
 
 // FIXME: ugly log line that feels out of place - should probably go into a fingerprinting funtion
 // inside AgentJones
-log( ['agent-jones: ' + pkg.version , 'nodejs: ' + process.versions.node, 'os: ' + os.platform() + ' ' + os.release(), 'arch: ' + os.arch()].join(', '))
+log(`fingerprint ${fingerprint()}`)
 
 var herokuSlugDriverFactory = new HerokuSlugFactory(SLUGRUNNER_CWD)
 var schedulerClient = new SchedulerHttpClient(SCHEDULER_ENDPOINT, SCHEDULER_TOKEN)
