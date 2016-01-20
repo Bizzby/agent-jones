@@ -30,8 +30,7 @@ var SLUGRUNNER_CWD = process.env['WORKSPACE'] || path.join(process.cwd(), 'works
 
 var SLACK_WEBHOOK_URL = process.env['SLACK_WEBHOOK_URL']
 
-// FIXME: ugly log line that feels out of place - should probably go into a fingerprinting funtion
-// inside AgentJones
+// FIXME: ugly log line that feels out of place, should probably be inside AgentJones
 log(`fingerprint ${fingerprint()}`)
 
 var herokuSlugDriverFactory = new HerokuSlugFactory(SLUGRUNNER_CWD)
@@ -62,6 +61,7 @@ var shutUpShop = function(signal){
         log.close()
         // DDOGY failsafe incase network IO etc doesn't shutdown - we shouldn't need this
         // and it generally shouldn't get called
+        // FIXME: magic 5 second timeout :-p
         setTimeout(process.exit, 5000).unref()
     })
 }
