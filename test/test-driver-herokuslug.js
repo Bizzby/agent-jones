@@ -6,8 +6,7 @@ var path = require('path')
 var os = require('os')
 
 var tarballServer = require('./mocks/tarballServer').createServer()
-
-var Task = require('../lib/Task')
+var taskFactory = require('./utils/taskFactory')
 var SlugRunner = require('../lib/Driver/HerokuSlug')
 
 var workspace = path.join(os.tmpdir(), 'herokuslug-driver-test')
@@ -17,13 +16,8 @@ var port = 12345
 
 tarballServer.listen(port)
 
-var task = new Task()
+var task = taskFactory()
 
-task.name = 'mock-task'
-task.app = 'bash-ting'
-task.command = ['echo', ': task start', '&&', 'echo', ': $$', '&&', 'sleep', '1', '&&', 'echo', ': task ended']
-task.tarball = 'http://127.0.0.1:12345/app.tar.gz?somestuff=yeeaah'
-task.enviroment = {FOO: 'BAR'}
 
 var slugRunner = new SlugRunner(workspace)
 
@@ -38,5 +32,10 @@ slugRunner.on('exit', function () {
 })
 
 slugRunner.start(task)
+
+setTimeout(function(){
+    slugRunner.stop()
+}, 50000)
+
 
 console.log('[TEST-SCRIPT] some log outout should follow :-) \n[TEST-SCRIPT] it should end with "exit fired"') // eslint-disable-line no-console
