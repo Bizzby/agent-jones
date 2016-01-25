@@ -33,8 +33,8 @@ slugRunner.on('exit', function () {
 
 slugRunner.start(task)
 
-setTimeout(function(){
-    slugRunner.stop()
+setTimeout(function () {
+  slugRunner.stop()
 }, 50000)
 
 

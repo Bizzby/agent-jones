@@ -1,6 +1,6 @@
 {
   "name": "agent-jones",
-  "version": "0.0.30-debug",
+  "version": "0.0.30",
   "description": "an agent/runner for heroku tarballs",
   "bin": {
     "slugrunner": "./bin/slugrunner",
