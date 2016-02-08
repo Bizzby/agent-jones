@@ -66,6 +66,20 @@ var shutUpShop = function(signal){
     })
 }
 
+// Trap and act on signals
 sigTrap(shutUpShop)
 
-
+// Attempt to crash nicely
+// FIXME: this is 99% copy-pasta of shutUpShup
+process.on('uncaughtException', function(err){
+    log(`uncaught Exception received, attempting graceful shutdown`)
+    log(err)
+    agentJones.stop(function(){
+        clearInterval(statsOutput)
+        log.close()
+        // DDOGY failsafe incase network IO etc doesn't shutdown - we shouldn't need this
+        // and it generally shouldn't get called
+        // FIXME: magic 5 second timeout :-p
+        setTimeout(process.exit, 5000).unref()
+    })
+})
