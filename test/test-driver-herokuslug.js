@@ -18,7 +18,6 @@ tarballServer.listen(port)
 
 var task = taskFactory()
 
-
 var slugRunner = new SlugRunner(workspace)
 
 slugRunner.on('start', function () {
@@ -36,6 +35,5 @@ slugRunner.start(task)
 setTimeout(function () {
   slugRunner.stop()
 }, 50000)
-
 
 console.log('[TEST-SCRIPT] some log outout should follow :-) \n[TEST-SCRIPT] it should end with "exit fired"') // eslint-disable-line no-console

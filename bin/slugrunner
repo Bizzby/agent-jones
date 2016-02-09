@@ -34,24 +34,6 @@
 
 [[ $DEBUG_SLUGRUNNER ]] && set -x
 
-## Load slug from Bind Mount, URL or STDIN
-
-export HOME=$PWD/app
-mkdir -p $HOME
-
-if [[ $(ls -A $HOME) ]]; then
-    true
-elif [[ $SLUG_URL ]]; then
-    ## opendeis/flynn tarballs have no container directory
-    ## heroku tarballs have `./app/` as the container dir
-    curl -s "$SLUG_URL" | tar -xzC $HOME --strip 2
-    unset SLUG_URL
-else
-    cat | tar -xzC $HOME --strip 2
-fi
-
-cd $HOME
-
 ## Load profile.d and release config
 
 shopt -s nullglob

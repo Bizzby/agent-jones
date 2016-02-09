@@ -73,7 +73,7 @@ sigTrap(shutUpShop)
 // FIXME: this is 99% copy-pasta of shutUpShup
 process.on('uncaughtException', function(err){
     log(`uncaught Exception received, attempting graceful shutdown`)
-    log(err)
+    console.log(err)
     agentJones.stop(function(){
         clearInterval(statsOutput)
         log.close()
