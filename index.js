@@ -25,9 +25,10 @@ const agentname = process.env['AGENT_NAME'] || 'anonymous'
 const SCHEDULER_ENDPOINT = process.env['SCHEDULER_ENDPOINT']
 // optional token incase the scheduler requires tokens
 const SCHEDULER_TOKEN = process.env['SCHEDULER_TOKEN']
-
-// where we run/unpack the tarball
-const SLUGRUNNER_CWD = process.env['WORKSPACE'] || path.join(process.cwd(), 'workspace')
+// TODO: make data-dir mandatory and phase out workspace
+const DATA_DIR = process.env['DATA_DIR'] || process.env['WORKSPACE'] || process.cwd()
+const STATE_DIR = process.env['STATE_DIR'] || path.join(DATA_DIR, 'state') // eslint-disable-line no-unused-vars
+const ALLOCATION_DIR = process.env['STATE_DIR'] || path.join(DATA_DIR, 'allocation')
 
 const SLACK_WEBHOOK_URL = process.env['SLACK_WEBHOOK_URL']
 
@@ -36,7 +37,7 @@ const YELLER_TOKEN = process.env['YELLER_TOKEN']
 // FIXME: ugly log line that feels out of place, should probably be inside AgentJones
 log(`fingerprint ${fingerprint()}`)
 
-const herokuSlugDriverFactory = new HerokuSlugFactory(SLUGRUNNER_CWD)
+const herokuSlugDriverFactory = new HerokuSlugFactory(ALLOCATION_DIR)
 const schedulerClient = new SchedulerHttpClient(SCHEDULER_ENDPOINT, SCHEDULER_TOKEN)
 const taskWatcher = new TaskWatcher(agentname, hostname, schedulerClient)
 const agentJones = new AgentJones(agentname, hostname, taskWatcher, herokuSlugDriverFactory)
