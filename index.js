@@ -1,69 +1,70 @@
-var path = require("path")
-var os = require("os")
+'use strict'
 
+const path = require('path')
+const os = require('os')
 
-var HerokuSlugFactory = require('./lib/driver/HerokuSlugFactory')
-var SchedulerHttpClient = require('./lib/SchedulerHttpClient')
-var AgentJones = require('./lib/AgentJones')
-var TaskWatcher = require('./lib/TaskWatcher')
-var SlackClient = require('./lib/SlackClient')
-var agentJonesSlackifier = require('./lib/agentJonesSlackifier')
+const yeller = require('yeller_node')
 
-var log = require('./lib/log')
-var logStringify = require('./lib/utils/logStringify')
-var sigTrap = require('./lib/utils/sigTrap')
-var fingerprint = require('./lib/utils/fingerprint')
-var stats = require('./lib/stats')
+const HerokuSlugFactory = require('./lib/driver/HerokuSlugFactory')
+const SchedulerHttpClient = require('./lib/SchedulerHttpClient')
+const AgentJones = require('./lib/AgentJones')
+const TaskWatcher = require('./lib/TaskWatcher')
+const SlackClient = require('./lib/SlackClient')
+const agentJonesSlackifier = require('./lib/agentJonesSlackifier')
 
+const log = require('./lib/log')
+const logStringify = require('./lib/utils/logStringify')
+const sigTrap = require('./lib/utils/sigTrap')
+const fingerprint = require('./lib/utils/fingerprint')
+const stats = require('./lib/stats')
 
-
-var hostname = process.env['HOSTNAME'] || os.hostname();
-var agentname = process.env['AGENT_NAME'] || 'anonymous';
+const hostname = process.env['HOSTNAME'] || os.hostname()
+const agentname = process.env['AGENT_NAME'] || 'anonymous'
 
 // get the address of the scheduler
-var SCHEDULER_ENDPOINT = process.env['SCHEDULER_ENDPOINT']
+const SCHEDULER_ENDPOINT = process.env['SCHEDULER_ENDPOINT']
 // optional token incase the scheduler requires tokens
-var SCHEDULER_TOKEN = process.env['SCHEDULER_TOKEN']
+const SCHEDULER_TOKEN = process.env['SCHEDULER_TOKEN']
 
 // where we run/unpack the tarball
-var SLUGRUNNER_CWD = process.env['WORKSPACE'] || path.join(process.cwd(), 'workspace')
+const SLUGRUNNER_CWD = process.env['WORKSPACE'] || path.join(process.cwd(), 'workspace')
 
-var SLACK_WEBHOOK_URL = process.env['SLACK_WEBHOOK_URL']
+const SLACK_WEBHOOK_URL = process.env['SLACK_WEBHOOK_URL']
+
+const YELLER_TOKEN = process.env['YELLER_TOKEN']
 
 // FIXME: ugly log line that feels out of place, should probably be inside AgentJones
 log(`fingerprint ${fingerprint()}`)
 
-var herokuSlugDriverFactory = new HerokuSlugFactory(SLUGRUNNER_CWD)
-var schedulerClient = new SchedulerHttpClient(SCHEDULER_ENDPOINT, SCHEDULER_TOKEN)
-var taskWatcher = new TaskWatcher(agentname, hostname, schedulerClient)
-var agentJones = new AgentJones(agentname, hostname, taskWatcher, herokuSlugDriverFactory);
+const herokuSlugDriverFactory = new HerokuSlugFactory(SLUGRUNNER_CWD)
+const schedulerClient = new SchedulerHttpClient(SCHEDULER_ENDPOINT, SCHEDULER_TOKEN)
+const taskWatcher = new TaskWatcher(agentname, hostname, schedulerClient)
+const agentJones = new AgentJones(agentname, hostname, taskWatcher, herokuSlugDriverFactory)
 
-//turn on slack notifications
-if(SLACK_WEBHOOK_URL) {
-    log('slack output via webhooks enabled')
-    agentJonesSlackifier(agentJones, new SlackClient(SLACK_WEBHOOK_URL))
+// turn on slack notifications
+if (SLACK_WEBHOOK_URL) {
+  log('slack output via webhooks enabled')
+  agentJonesSlackifier(agentJones, new SlackClient(SLACK_WEBHOOK_URL))
 }
 
 agentJones.start()
 
 // TODO: tidy this away somewhere
-var statsOutput = setInterval(function(){
+const statsOutput = setInterval(function () {
+  const processStatOutput = stats.procStats.toJSON()
+  log('metrics ' + logStringify(processStatOutput.process))
+}, 60 * 1000)
 
-    var processStatOutput = stats.procStats.toJSON()
-    log('metrics ' + logStringify(processStatOutput.process))
-
-}, 60*1000)
-
-var shutUpShop = function(signal){
-    log(`${signal} received, attempting graceful shutdown`)
-    agentJones.stop(function(){
-        clearInterval(statsOutput)
-        log.close()
+const shutUpShop = function (signal) {
+  log(`${signal} received, attempting graceful shutdown`)
+  agentJones.stop(function () {
+    clearInterval(statsOutput)
+    log.close()
         // DDOGY failsafe incase network IO etc doesn't shutdown - we shouldn't need this
         // and it generally shouldn't get called
         // FIXME: magic 5 second timeout :-p
-        setTimeout(process.exit, 5000).unref()
-    })
+    setTimeout(process.exit, 5000).unref()
+  })
 }
 
 // Trap and act on signals
@@ -71,15 +72,31 @@ sigTrap(shutUpShop)
 
 // Attempt to crash nicely
 // FIXME: this is 99% copy-pasta of shutUpShup
-process.on('uncaughtException', function(err){
-    log(`uncaught Exception received, attempting graceful shutdown`)
-    console.log(err)
-    agentJones.stop(function(){
-        clearInterval(statsOutput)
-        log.close()
+process.on('uncaughtException', function (err) {
+  log(`uncaught exception received: ${err.message}, attempting graceful shutdown`)
+
+    // create yeller client
+    // TODO: move this out to module
+  if (YELLER_TOKEN) {
+    log(`sending exception to yeller`)
+    const logError = function (err) { log(err.message) }
+    const errorHandler = {
+      ioError: logError,
+      authError: logError
+    }
+    const yellerClient = yeller.client({token: YELLER_TOKEN, errerrorHandler: errorHandler})
+    // NOTE: thr 5 second timeout below should buy us enough time to fire off the message
+    yellerClient.report(err, {location: agentname})
+  } else {
+    log(err.stack)
+  }
+
+  agentJones.stop(function () {
+    clearInterval(statsOutput)
+    log.close()
         // DDOGY failsafe incase network IO etc doesn't shutdown - we shouldn't need this
         // and it generally shouldn't get called
         // FIXME: magic 5 second timeout :-p
-        setTimeout(process.exit, 5000).unref()
-    })
+    setTimeout(process.exit, 5000).unref()
+  })
 })

@@ -17,7 +17,7 @@
   "main": "index.js",
   "scripts": {
     "test": "tap test/*.js --cov",
-    "lint": "eslint --fix lib test bin"
+    "lint": "eslint --fix lib test bin index.js"
   },
   "author": "sandfox",
   "license": "Apache-2.0",
@@ -41,7 +41,8 @@
     "tar-fs": "^1.10.0",
     "tree-kill": "^1.0.0",
     "winston": "^2.1.1",
-    "winston-papertrail": "^1.0.2"
+    "winston-papertrail": "^1.0.2",
+    "yeller_node": "0.0.7"
   },
   "devDependencies": {
     "eslint": "^1.10.3",

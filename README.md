@@ -77,6 +77,7 @@ All configuration is currently through the enviroment
 - `WORKSPACE`: optional, directory the agent will use for unpacking tarballs etc. The agent must have the permission to create this directory and during it's lifecycle will destroy anything here! By default it's the current working directory + '/workspace'
 - `CONSOLE_OUTPUT`: optional, defaults to `true` unless `PAPERTRAIL_URL` is also supplied. Enables/disbales logging to stdout
 - `PAPERTRAIL_URL`: optional, a `url` to a papertrail log destination e.g `syslog://logs.papertrailapp.com:12345`, if supplied will disable logging to stdout.
+- `YELLER_TOKEN`: optional, a `url` to a papertrail log destination e.g `syslog://logs.papertrailapp.com:12345`, if supplied will disable logging to stdout.
 - `SLACK_WEBHOOK_URL`: optional, a `url` to a slack webhook e.g `https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXX`, the agent will send some event messages to this endpoint (see below)
 
 __Logging__
