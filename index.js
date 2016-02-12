@@ -85,7 +85,7 @@ process.on('uncaughtException', function (err) {
       ioError: logError,
       authError: logError
     }
-    const yellerClient = yeller.client({token: YELLER_TOKEN, errerrorHandler: errorHandler})
+    const yellerClient = yeller.client({token: YELLER_TOKEN, errorHandler: errorHandler})
     // NOTE: thr 5 second timeout below should buy us enough time to fire off the message
     yellerClient.report(err, {location: agentname})
   } else {
