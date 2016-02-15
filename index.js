@@ -35,7 +35,7 @@ const SLACK_WEBHOOK_URL = process.env['SLACK_WEBHOOK_URL']
 const YELLER_TOKEN = process.env['YELLER_TOKEN']
 
 // FIXME: ugly log line that feels out of place, should probably be inside AgentJones
-log(`fingerprint ${fingerprint()}`)
+log.info(`fingerprint ${fingerprint()}`)
 
 const herokuSlugDriverFactory = new HerokuSlugFactory(ALLOCATION_DIR)
 const schedulerClient = new SchedulerHttpClient(SCHEDULER_ENDPOINT, SCHEDULER_TOKEN)
@@ -44,7 +44,7 @@ const agentJones = new AgentJones(agentname, hostname, taskWatcher, herokuSlugDr
 
 // turn on slack notifications
 if (SLACK_WEBHOOK_URL) {
-  log('slack output via webhooks enabled')
+  log.info('slack output via webhooks enabled')
   agentJonesSlackifier(agentJones, new SlackClient(SLACK_WEBHOOK_URL))
 }
 
@@ -53,11 +53,11 @@ agentJones.start()
 // TODO: tidy this away somewhere
 const statsOutput = setInterval(function () {
   const processStatOutput = stats.procStats.toJSON()
-  log('metrics ' + logStringify(processStatOutput.process))
+  log.info('metrics ' + logStringify(processStatOutput.process))
 }, 60 * 1000)
 
 const shutUpShop = function (signal) {
-  log(`${signal} received, attempting graceful shutdown`)
+  log.warn(`${signal} received, attempting graceful shutdown`)
   agentJones.stop(function () {
     clearInterval(statsOutput)
     log.close()
@@ -74,13 +74,13 @@ sigTrap(shutUpShop)
 // Attempt to crash nicely
 // FIXME: this is 99% copy-pasta of shutUpShup
 process.on('uncaughtException', function (err) {
-  log(`uncaught exception received: ${err.message}, attempting graceful shutdown`)
+  log.error(`uncaught exception received: ${err.message}, attempting graceful shutdown`)
 
     // create yeller client
     // TODO: move this out to module
   if (YELLER_TOKEN) {
-    log(`sending exception to yeller`)
-    const logError = function (err) { log(err.message) }
+    log.info(`sending exception to yeller`)
+    const logError = function (err) { log.error(err.message) }
     const errorHandler = {
       ioError: logError,
       authError: logError
@@ -89,7 +89,7 @@ process.on('uncaughtException', function (err) {
     // NOTE: thr 5 second timeout below should buy us enough time to fire off the message
     yellerClient.report(err, {location: agentname})
   } else {
-    log(err.stack)
+    log.error(err.stack)
   }
 
   agentJones.stop(function () {

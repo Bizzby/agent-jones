@@ -22,7 +22,7 @@
   "author": "sandfox",
   "license": "Apache-2.0",
   "dependencies": {
-    "@sandfox/camlock": "^1.0.1",
+    "@sandfox/camlock": "^1.1.0",
     "async": "^1.5.2",
     "bizzby-lsb-release": "^0.2.0",
     "debug": "^2.2.0",
