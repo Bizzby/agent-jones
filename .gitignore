@@ -1,3 +1,4 @@
 node_modules
 workspace
 allocation
+.nyc_output

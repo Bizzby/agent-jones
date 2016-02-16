@@ -16,7 +16,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "test": "tap test/*.js --cov",
+    "test": "tap test/test-*.js --cov",
     "lint": "eslint --fix lib test bin index.js"
   },
   "author": "sandfox",
